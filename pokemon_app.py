@@ -3,7 +3,6 @@ import random
 import requests
 from battle_1v1 import start_battle_1v1
 from battle_2v2 import start_battle_2v2
-import os
 
 # Global state for caught Pokémon
 if 'caught_pokemon' not in st.session_state:
@@ -32,40 +31,9 @@ def catch_pokemon(pokemon_number):
     else:
         st.error("Pokémon not found! Please try again.")
 
-# Set background function for the app
-# Function to set the background image
-import os
-import streamlit as st
-
-def set_background():
-    import os
-import streamlit as st
-
-def set_background():
-    img_path = r'c:\Users\admin\Downloads\726b01f279c9513b0421fb4b2ed91c10.jpg'  # Make sure this path is correct
-
-    # Check if the image exists
-    if os.path.exists(img_path):
-        st.markdown(
-            f"""
-            <style>
-            body {{
-                background-image: url('file://{os.path.abspath(img_path)}');
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-            }}
-            </style>
-            """, unsafe_allow_html=True
-        )
-    else:
-        st.error(f"Background image not found. Please check the file path: {img_path}")
-
-
-
 # Function to display Pokémon as a card
 def show_pokemon_card(pokemon):
-    with st.expander(f"{pokemon['name'].capitalize()}"):   
+    with st.expander(f"{pokemon['name'].capitalize()}"):
         st.image(pokemon['image'], width=200)
         st.write(f"**Name**: {pokemon['name']}")
         st.write(f"**ID**: {pokemon['id']}")
@@ -80,7 +48,6 @@ def display_pokeball_to_catch():
 
 # Home page UI
 def home_page():
-    set_background()
     st.title("Pokémon Adventure")
     
     st.sidebar.title("Navigation")
@@ -169,33 +136,11 @@ def battle_page_2v2():
     user_pokemon1 = st.selectbox("Choose your first Pokémon", [poke['name'] for poke in st.session_state.caught_pokemon])
     user_pokemon2 = st.selectbox("Choose your second Pokémon", [poke['name'] for poke in st.session_state.caught_pokemon if poke['name'] != user_pokemon1])
 
-    # Randomly select two opponent Pokémon
-    opponent_pokemon1 = random.randint(1, 898)
-    opponent_pokemon2 = random.randint(1, 898)
-
-    opponent_details1 = get_pokemon_details(opponent_pokemon1)
-    opponent_details2 = get_pokemon_details(opponent_pokemon2)
-
-    if opponent_details1 and opponent_details2:
-        st.subheader("Opponent Pokémon")
-        st.image(opponent_details1['sprites']['front_default'], width=100)
-        st.write(f"**Name**: {opponent_details1['name']}")
-        st.image(opponent_details2['sprites']['front_default'], width=100)
-        st.write(f"**Name**: {opponent_details2['name']}")
-
     if st.button("Start Battle"):
-        result, winner, user_pokemon1_details, user_pokemon2_details, opponent_pokemon1_details, opponent_pokemon2_details = start_battle_2v2(
-            user_pokemon1, user_pokemon2, opponent_details1, opponent_details2)
+        result, winner, *_ = start_battle_2v2(user_pokemon1, user_pokemon2)
         st.write(result)
-        st.image(user_pokemon1_details['image'], width=100)
-        st.write(f"**Your Pokémon 1**: {user_pokemon1_details['name']}")
-        st.image(user_pokemon2_details['image'], width=100)
-        st.write(f"**Your Pokémon 2**: {user_pokemon2_details['name']}")
-        st.image(opponent_pokemon1_details['image'], width=100)
-        st.write(f"**Opponent's Pokémon 1**: {opponent_pokemon1_details['name']}")
-        st.image(opponent_pokemon2_details['image'], width=100)
-        st.write(f"**Opponent's Pokémon 2**: {opponent_pokemon2_details['name']}")
 
 # Run the app
 if __name__ == "__main__":
     home_page()
+ 
